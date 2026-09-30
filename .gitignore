@@ -1,0 +1,17 @@
+# Sorties .NET / C++ prévues
+**/bin/
+**/obj/
+**/TestResults/
+.vs/
+*.user
+*.suo
+# Données locales et secrets
+.env
+.env.*
+*.db
+*.db-shm
+*.db-wal
+*.evtc
+*.zevtc
+*.evtc.zip
+*.dmp

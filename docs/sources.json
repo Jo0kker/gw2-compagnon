@@ -1,0 +1,103 @@
+{
+  "consultedAt": "2026-09-30",
+  "sources": [
+    {
+      "repository": "https://github.com/gw2-addon-loader/Approved-Addons.git",
+      "commit": "754d8888c4e1258f574fc30cde5be2a2a25975a0",
+      "commitDate": "2026-01-14",
+      "documents": [
+        "README.md",
+        "LICENSE"
+      ]
+    },
+    {
+      "repository": "https://github.com/knoxfighter/GW2-ArcDPS-Boon-Table.git",
+      "commit": "156bba52a4062ec46214dc6ad302b5961d9f2250",
+      "commitDate": "2026-08-22",
+      "documents": [
+        "README.MD",
+        "LICENSE"
+      ]
+    },
+    {
+      "repository": "https://github.com/knoxfighter/GW2-ArcDPS-Mechanics-Log.git",
+      "commit": "dded3f1b6afea956e5c86527a900a6b830e98bdd",
+      "commitDate": "2026-07-12",
+      "documents": [
+        "README.MD",
+        "LICENSE"
+      ]
+    },
+    {
+      "repository": "https://github.com/RaidcoreGG/GW2-Arcdps-Integration.git",
+      "commit": "c5a2c5a9c7450cb9a9e431137d12d54e14536537",
+      "commitDate": "2025-04-22",
+      "documents": [
+        "LICENSE"
+      ]
+    },
+    {
+      "repository": "https://github.com/baaron4/GW2-Elite-Insights-Parser.git",
+      "commit": "6470c0d70f421b1f0f519d04681ae39348c14b77",
+      "commitDate": "2026-09-30",
+      "documents": [
+        "README.md",
+        "LICENSE"
+      ]
+    },
+    {
+      "repository": "https://github.com/typedeck0/Know-thy-enemy.git",
+      "commit": "a6d5df5be52a6cb29992c3c27895603bda745491",
+      "commitDate": "2024-08-21",
+      "documents": [
+        "README.md",
+        "LICENSE"
+      ]
+    },
+    {
+      "repository": "https://github.com/jake-greygoose/WvW-Fight-Analysis-Addon.git",
+      "commit": "171086b6f5800204435ac91420e25a30333167c7",
+      "commitDate": "2026-09-16",
+      "documents": [
+        "README.md",
+        "LICENSE"
+      ]
+    },
+    {
+      "repository": "https://github.com/blish-hud/arcdps-bhud.git",
+      "commit": "0daaffd64cac647389d14468efc7a0f09430fa8d",
+      "commitDate": "2026-05-08",
+      "documents": [
+        "README.md",
+        "LICENSE"
+      ]
+    },
+    {
+      "repository": "https://github.com/knoxfighter/arcdps-killproof.me-plugin.git",
+      "commit": "2148a9f6e413f302d55f795b6d1429c93d15cb79",
+      "commitDate": "2026-08-15",
+      "documents": [
+        "README.md",
+        "LICENSE"
+      ]
+    },
+    {
+      "repository": "https://github.com/Krappa322/arcdps_healing_stats.git",
+      "commit": "fc360441340690f9245127ddc6ae41609391c72e",
+      "commitDate": "2026-09-05",
+      "documents": [
+        "README.md",
+        "LICENSE"
+      ]
+    },
+    {
+      "repository": "https://github.com/Krappa322/arcdps_unofficial_extras_releases.git",
+      "commit": "33bd9ac59ba4187cddc8f566e9830c847f16dda3",
+      "commitDate": "2026-08-14",
+      "documents": [
+        "README.md",
+        "LICENSE"
+      ]
+    }
+  ]
+}
