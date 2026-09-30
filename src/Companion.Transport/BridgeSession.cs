@@ -1,3 +1,4 @@
+using static Companion.Core.Localization.Text;
 using Companion.Core;
 
 namespace Companion.Transport;
@@ -18,11 +19,11 @@ public sealed class BridgeSession
     public void Begin(BridgeFrame hello)
     {
         BridgeProtocol.Validate(hello);
-        if (hello.Kind != BridgeMessage.Hello) throw new InvalidDataException("Handshake attendu avant les événements.");
+        if (hello.Kind != BridgeMessage.Hello) throw new InvalidDataException(T("HandshakeRequired"));
         if (Id == hello.SessionId)
         {
             if (!Finished) partial = true;
-            if (hello.DroppedEvents < DroppedEvents) throw new InvalidDataException("Compteur de pertes rétrograde.");
+            if (hello.DroppedEvents < DroppedEvents) throw new InvalidDataException(T("LossCounterReversed"));
         }
         else
         {
@@ -37,23 +38,23 @@ public sealed class BridgeSession
     {
         BridgeProtocol.Validate(frame);
         if (Id is null || frame.SessionId != Id || frame.Kind == BridgeMessage.Hello)
-            throw new InvalidDataException("Session absente ou différente.");
+            throw new InvalidDataException(T("SessionMismatch"));
         if (frame.Sequence <= lastSequence)
         {
             if (frame.Sequence < lastSequence) partial = true;
             return; // Never count a replayed sequence twice.
         }
-        if (Finished) throw new InvalidDataException("Le combat est déjà terminé.");
+        if (Finished) throw new InvalidDataException(T("EncounterEnded"));
         if (frame.TimeMs < timeMs || frame.DroppedEvents < DroppedEvents)
-            throw new InvalidDataException("Horloge ou compteur de pertes rétrograde.");
+            throw new InvalidDataException(T("ClockReversed"));
         if (frame.Sequence != lastSequence + 1 || frame.DroppedEvents > DroppedEvents) partial = true;
         if (frame.Kind == BridgeMessage.Damage)
         {
             var key = (frame.Player!, frame.Subgroup);
             if (!damage.ContainsKey(key) && damage.Count >= MaxPlayers)
-                throw new InvalidDataException("Limite de joueurs de la session atteinte.");
+                throw new InvalidDataException(T("PlayerLimit"));
             if (frame.Damage > long.MaxValue - totalDamage)
-                throw new InvalidDataException("Total de dégâts hors limites.");
+                throw new InvalidDataException(T("DamageOverflow"));
             damage[key] = damage.GetValueOrDefault(key) + frame.Damage;
             totalDamage += frame.Damage;
         }

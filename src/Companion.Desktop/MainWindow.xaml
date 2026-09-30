@@ -2,41 +2,41 @@
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  xmlns:local="clr-namespace:Companion.Desktop"
- Title="Compagnon GW2 — aperçu de développement" Width="1280" Height="850" MinWidth="840" MinHeight="580" WindowStartupLocation="CenterScreen">
+ Title="{local:Tr AppTitle}" Width="1280" Height="850" MinWidth="840" MinHeight="580" WindowStartupLocation="CenterScreen">
  <DockPanel Margin="24,12,24,16">
   <TextBlock DockPanel.Dock="Bottom" Text="{Binding Status}" Foreground="{StaticResource Muted}" Margin="0,10,0,0" TextWrapping="Wrap"/>
   <TabControl Background="Transparent" BorderThickness="0" Foreground="#EAF0F6">
-   <TabItem Header="Dashboard">
+   <TabItem Header="{local:Tr Dashboard}">
     <DockPanel Margin="0,20,0,0">
      <DockPanel DockPanel.Dock="Top" Margin="0,0,0,16">
       <Button DockPanel.Dock="Right" Content="{Binding EditLabel}" Click="ToggleEdit" Background="#0C8390"/>
-      <ComboBox Width="240" HorizontalAlignment="Left" ItemsSource="{Binding Profiles}" SelectedItem="{Binding Selected}" DisplayMemberPath="Name" AutomationProperties.Name="Profil actif"/>
-      <ComboBox Width="180" HorizontalAlignment="Left" ItemsSource="{Binding Pages}" SelectedItem="{Binding Page}" DisplayMemberPath="Name" AutomationProperties.Name="Page active"/>
+      <ComboBox Width="240" HorizontalAlignment="Left" ItemsSource="{Binding Profiles}" SelectedItem="{Binding Selected}" DisplayMemberPath="Name" AutomationProperties.Name="{local:Tr ActiveProfile}"/>
+      <ComboBox Width="180" HorizontalAlignment="Left" ItemsSource="{Binding Pages}" SelectedItem="{Binding Page}" DisplayMemberPath="Name" AutomationProperties.Name="{local:Tr ActivePage}"/>
      </DockPanel>
      <Border DockPanel.Dock="Top" Background="#1A3043" Padding="14,10" CornerRadius="4" Margin="0,0,0,16">
       <TextBlock Text="{Binding ConnectionLabel}" Foreground="#AEDCE7"/>
      </Border>
      <StackPanel DockPanel.Dock="Top" Visibility="{Binding Editing, Converter={StaticResource Visible}}" Margin="0,0,0,14">
       <WrapPanel Margin="0,0,0,10">
-       <TextBox x:Name="ProfileNameInput" Text="{Binding ProfileName, Mode=OneWay}" Width="190" MaxLength="80" AutomationProperties.Name="Nom du profil"/>
-       <Button Content="Renommer" Click="RenameProfile"/><Button Content="Nouveau profil" Click="NewProfile"/>
-       <Button Content="Dupliquer le profil" Click="DuplicateProfile"/><Button Content="Supprimer le profil" Click="DeleteProfile"/>
-       <Button Content="Importer" Click="ImportProfile"/><Button Content="Exporter" Click="ExportProfile"/>
+       <TextBox x:Name="ProfileNameInput" Text="{Binding ProfileName, Mode=OneWay}" Width="190" MaxLength="80" AutomationProperties.Name="{local:Tr ProfileName}"/>
+       <Button Content="{local:Tr Rename}" Click="RenameProfile"/><Button Content="{local:Tr NewProfile}" Click="NewProfile"/>
+       <Button Content="{local:Tr DuplicateProfile}" Click="DuplicateProfile"/><Button Content="{local:Tr DeleteProfile}" Click="DeleteProfile"/>
+       <Button Content="{local:Tr Import}" Click="ImportProfile"/><Button Content="{local:Tr Export}" Click="ExportProfile"/>
       </WrapPanel>
       <WrapPanel Margin="0,0,0,10">
-       <TextBox x:Name="PageNameInput" Text="{Binding PageName, Mode=OneWay}" Width="190" MaxLength="80" AutomationProperties.Name="Nom de la page"/>
-       <Button Content="Renommer la page" Click="RenamePage"/><Button Content="Dupliquer la page" Click="DuplicatePage"/>
-       <Button Content="Supprimer la page" Click="DeletePage"/>
-       <Button Content="Ajouter une page" Click="AddPage"/>
+       <TextBox x:Name="PageNameInput" Text="{Binding PageName, Mode=OneWay}" Width="190" MaxLength="80" AutomationProperties.Name="{local:Tr PageName}"/>
+       <Button Content="{local:Tr RenamePage}" Click="RenamePage"/><Button Content="{local:Tr DuplicatePage}" Click="DuplicatePage"/>
+       <Button Content="{local:Tr DeletePage}" Click="DeletePage"/>
+       <Button Content="{local:Tr AddPage}" Click="AddPage"/>
       </WrapPanel>
       <WrapPanel>
-       <Button Content="Ajouter un tableau joueurs" Tag="damage-players" Click="AddWidget"/>
-       <Button Content="Ajouter un tableau groupes" Tag="damage-groups" Click="AddWidget"/>
-       <TextBlock Text="Déplacer par la poignée · Redimensionner par le coin · Flèches sur la poignée : 16 px" Foreground="{StaticResource Muted}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+       <Button Content="{local:Tr AddPlayers}" Tag="damage-players" Click="AddWidget"/>
+       <Button Content="{local:Tr AddGroups}" Tag="damage-groups" Click="AddWidget"/>
+       <TextBlock Text="{local:Tr MoveHint}" Foreground="{StaticResource Muted}" VerticalAlignment="Center" TextWrapping="Wrap"/>
       </WrapPanel>
      </StackPanel>
      <Grid>
-      <TextBlock Text="Aucun widget visible. Passez en mode édition pour en ajouter ou les réafficher." TextWrapping="Wrap" Foreground="{StaticResource Muted}" Margin="16" Visibility="{Binding NoWidgets, Converter={StaticResource Visible}}"/>
+      <TextBlock Text="{local:Tr NoWidgets}" TextWrapping="Wrap" Foreground="{StaticResource Muted}" Margin="16" Visibility="{Binding NoWidgets, Converter={StaticResource Visible}}"/>
       <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
        <ItemsControl ItemsSource="{Binding Widgets}" Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}">
         <ItemsControl.ItemsPanel><ItemsPanelTemplate><Canvas/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
@@ -46,31 +46,31 @@
           <Grid Margin="16">
            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
            <DockPanel Margin="0,0,0,12">
-            <Thumb DockPanel.Dock="Left" Width="26" Height="28" Margin="0,0,8,0" Cursor="SizeAll" Focusable="True" Background="#3BCBD0" DragDelta="MoveWidget" DragCompleted="FinishDrag" KeyDown="MoveWithKeyboard" ToolTip="Déplacer le widget" AutomationProperties.Name="Déplacer le widget" Visibility="{Binding Editing, Converter={StaticResource Visible}}"/>
+            <Thumb DockPanel.Dock="Left" Width="26" Height="28" Margin="0,0,8,0" Cursor="SizeAll" Focusable="True" Background="#3BCBD0" DragDelta="MoveWidget" DragCompleted="FinishDrag" KeyDown="MoveWithKeyboard" ToolTip="{local:Tr MoveWidget}" AutomationProperties.Name="{local:Tr MoveWidget}" Visibility="{Binding Editing, Converter={StaticResource Visible}}"/>
             <TextBlock Text="{Binding Title}" FontSize="21" FontWeight="SemiBold" VerticalAlignment="Center"/>
            </DockPanel>
            <StackPanel Grid.Row="1" Visibility="{Binding Editing, Converter={StaticResource Visible}}" Margin="0,0,0,12">
-            <WrapPanel Margin="0,0,0,8"><Button Content="Dupliquer" Click="DuplicateWidget"/><Button Content="{Binding HideLabel}" Click="HideWidget"/><Button Content="Retirer" Click="RemoveWidget"/></WrapPanel>
+            <WrapPanel Margin="0,0,0,8"><Button Content="{local:Tr Duplicate}" Click="DuplicateWidget"/><Button Content="{Binding HideLabel}" Click="HideWidget"/><Button Content="{local:Tr Remove}" Click="RemoveWidget"/></WrapPanel>
             <WrapPanel>
-             <TextBlock Text="Groupe (0 = tous)" VerticalAlignment="Center" Margin="0,0,8,0"/>
-             <ComboBox Width="65" ItemsSource="{x:Static local:WidgetViewModel.Groups}" SelectedItem="{Binding Group}" AutomationProperties.Name="Filtre sous-groupe"/>
-             <TextBlock Text="Lignes" VerticalAlignment="Center" Margin="0,0,8,0"/>
-             <ComboBox Width="65" ItemsSource="{x:Static local:WidgetViewModel.RowOptions}" SelectedItem="{Binding Rows}" AutomationProperties.Name="Nombre de lignes"/>
+             <TextBlock Text="{local:Tr GroupFilter}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+             <ComboBox Width="65" ItemsSource="{x:Static local:WidgetViewModel.Groups}" SelectedItem="{Binding Group}" AutomationProperties.Name="{local:Tr SubgroupFilter}"/>
+             <TextBlock Text="{local:Tr Rows}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+             <ComboBox Width="65" ItemsSource="{x:Static local:WidgetViewModel.RowOptions}" SelectedItem="{Binding Rows}" AutomationProperties.Name="{local:Tr RowCount}"/>
             </WrapPanel>
            </StackPanel>
            <Grid Grid.Row="2">
-            <DataGrid ItemsSource="{Binding Data}" FontSize="16" SelectionMode="Single" AutomationProperties.Name="Dégâts du combat fictif">
+            <DataGrid ItemsSource="{Binding Data}" FontSize="16" SelectionMode="Single" AutomationProperties.Name="{local:Tr DemoDamage}">
              <DataGrid.Columns>
-              <DataGridTextColumn Header="Joueur / groupe" Binding="{Binding Player}" Width="*" MinWidth="130"/>
-              <DataGridTextColumn Header="SG" Binding="{Binding Subgroup}" Width="50"/>
-              <DataGridTextColumn Header="Dégâts" Binding="{Binding Damage, StringFormat=N0}" Width="110"/>
-              <DataGridTextColumn Header="DPS" Binding="{Binding Dps, StringFormat=N0, TargetNullValue=—}" Width="85"/>
+              <DataGridTextColumn Header="{local:Tr PlayerGroup}" Binding="{Binding Player}" Width="*" MinWidth="130"/>
+              <DataGridTextColumn Header="{local:Tr GroupShort}" Binding="{Binding Subgroup}" Width="50"/>
+              <DataGridTextColumn Header="{local:Tr Damage}" Binding="{Binding Damage, StringFormat=N0}" Width="110"/>
+              <DataGridTextColumn Header="{local:Tr Dps}" Binding="{Binding Dps, StringFormat=N0, TargetNullValue=—}" Width="85"/>
              </DataGrid.Columns>
             </DataGrid>
             <TextBlock Text="{Binding EmptyMessage}" Visibility="{Binding Empty, Converter={StaticResource Visible}}" Foreground="{StaticResource Muted}" TextWrapping="Wrap" Margin="12,56,12,0" IsHitTestVisible="False"/>
            </Grid>
            <TextBlock Grid.Row="3" Text="{Binding Source}" TextWrapping="Wrap" Foreground="{StaticResource Muted}" Margin="0,14,20,0" FontSize="12"/>
-           <Thumb Grid.RowSpan="4" Width="16" Height="16" HorizontalAlignment="Right" VerticalAlignment="Bottom" Cursor="SizeNWSE" Background="#3BCBD0" DragDelta="ResizeWidget" DragCompleted="FinishDrag" Focusable="True" KeyDown="ResizeWithKeyboard" AutomationProperties.Name="Redimensionner le widget" Visibility="{Binding Editing, Converter={StaticResource Visible}}"/>
+           <Thumb Grid.RowSpan="4" Width="16" Height="16" HorizontalAlignment="Right" VerticalAlignment="Bottom" Cursor="SizeNWSE" Background="#3BCBD0" DragDelta="ResizeWidget" DragCompleted="FinishDrag" Focusable="True" KeyDown="ResizeWithKeyboard" AutomationProperties.Name="{local:Tr ResizeWidget}" Visibility="{Binding Editing, Converter={StaticResource Visible}}"/>
           </Grid>
          </Border>
         </DataTemplate></ItemsControl.ItemTemplate>
@@ -79,32 +79,35 @@
      </Grid>
     </DockPanel>
    </TabItem>
-   <TabItem Header="Combats">
+   <TabItem Header="{local:Tr Encounters}">
     <StackPanel Margin="16,32" MaxWidth="720" HorizontalAlignment="Left">
-     <TextBlock Text="Combats et rapports" FontSize="28" FontWeight="SemiBold"/>
-     <TextBlock Text="Aucun combat local indexé." Margin="0,24,0,8" FontSize="18"/>
-     <TextBlock Text="Cette première version utilise uniquement un combat fictif. L’indexation des logs, les sessions et la publication WvW Insights sont prévus dans la tranche suivante. Aucun fichier n’est envoyé." TextWrapping="Wrap" Foreground="{StaticResource Muted}"/>
+     <TextBlock Text="{local:Tr EncountersReports}" FontSize="28" FontWeight="SemiBold"/>
+     <TextBlock Text="{local:Tr NoEncounters}" Margin="0,24,0,8" FontSize="18"/>
+     <TextBlock Text="{local:Tr EncountersPlanned}" TextWrapping="Wrap" Foreground="{StaticResource Muted}"/>
     </StackPanel>
    </TabItem>
-   <TabItem Header="Intégrations">
+   <TabItem Header="{local:Tr Integrations}">
     <StackPanel Margin="16,32" MaxWidth="720" HorizontalAlignment="Left">
-     <TextBlock Text="Sources de données" FontSize="28" FontWeight="SemiBold"/>
-     <CheckBox Content="Activer le rejeu fictif" IsChecked="{Binding ReplayEnabled}" Foreground="#EAF0F6" Margin="0,24,0,12" FontSize="18"/>
-     <TextBlock Text="Fournit les tableaux de dégâts joueurs et sous-groupes. Désactiver cette source conserve les widgets et leurs filtres." TextWrapping="Wrap" Foreground="{StaticResource Muted}"/>
-     <CheckBox Content="Utiliser le simulateur local à la place du rejeu intégré" IsChecked="{Binding UseLocalBridge}" Foreground="#EAF0F6" Margin="0,24,0,12" FontSize="18"/>
+     <TextBlock Text="{local:Tr DataSources}" FontSize="28" FontWeight="SemiBold"/>
+     <CheckBox Content="{local:Tr EnableReplay}" IsChecked="{Binding ReplayEnabled}" Foreground="#EAF0F6" Margin="0,24,0,12" FontSize="18"/>
+     <TextBlock Text="{local:Tr ReplayHelp}" TextWrapping="Wrap" Foreground="{StaticResource Muted}"/>
+     <CheckBox Content="{local:Tr EnableSimulator}" IsChecked="{Binding UseLocalBridge}" Foreground="#EAF0F6" Margin="0,24,0,12" FontSize="18"/>
      <TextBlock Text="{Binding BridgeSummary}" TextWrapping="Wrap" Foreground="{StaticResource Muted}"/>
-     <TextBlock Text="Lancez Companion.BridgeSimulator sous le même utilisateur. Les événements passent réellement par le canal local, mais restent fictifs. Une coupure conserve les dernières valeurs et indique que le combat est incomplet." TextWrapping="Wrap" Foreground="{StaticResource Muted}" Margin="0,8,0,0"/>
-     <TextBlock Text="ArcDPS et bridge — non implémentés" FontSize="20" Margin="0,32,0,10"/>
-     <TextBlock Text="Ce prototype ne détecte ni ne modifie les fichiers du jeu. Aucune compatibilité réelle n’est encore validée." TextWrapping="Wrap" Foreground="{StaticResource Muted}"/>
+     <TextBlock Text="{local:Tr SimulatorHelp}" TextWrapping="Wrap" Foreground="{StaticResource Muted}" Margin="0,8,0,0"/>
+     <TextBlock Text="{local:Tr ArcPlanned}" FontSize="20" Margin="0,32,0,10"/>
+     <TextBlock Text="{local:Tr ArcHelp}" TextWrapping="Wrap" Foreground="{StaticResource Muted}"/>
     </StackPanel>
    </TabItem>
-   <TabItem Header="Paramètres">
+   <TabItem Header="{local:Tr Settings}">
     <StackPanel Margin="16,32" MaxWidth="800" HorizontalAlignment="Left">
-     <TextBlock Text="Stockage et diagnostic" FontSize="28" FontWeight="SemiBold"/>
-     <TextBlock Text="Profils enregistrés localement" Margin="0,24,0,10" FontSize="18"/>
-     <TextBox Text="{Binding StoragePath, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap" AutomationProperties.Name="Chemin des profils"/>
-     <TextBlock Text="Une sauvegarde précédente est conservée dans le fichier .bak. Les profils sont enregistrés en terminant l’édition et à la fermeture. Aucune clé, aucun jeton et aucune URL de publication ne sont stockés dans ces profils." TextWrapping="Wrap" Foreground="{StaticResource Muted}" Margin="0,16,0,0"/>
-     <TextBlock Text="Version de développement · Jeu non connecté · Affichage Windows à valider" Margin="0,24,0,0" TextWrapping="Wrap"/>
+     <TextBlock Text="{local:Tr Language}" FontSize="20" Margin="0,0,0,10"/>
+     <ComboBox Width="240" HorizontalAlignment="Left" ItemsSource="{x:Static local:DashboardViewModel.Languages}" DisplayMemberPath="Name" SelectedValuePath="Code" SelectedValue="{Binding SelectedLanguage}" AutomationProperties.Name="{local:Tr Language}"/>
+     <TextBlock Text="{local:Tr LanguageHelp}" TextWrapping="Wrap" Foreground="{StaticResource Muted}" Margin="0,8,0,24"/>
+     <TextBlock Text="{local:Tr StorageDiagnostics}" FontSize="28" FontWeight="SemiBold"/>
+     <TextBlock Text="{local:Tr LocalProfiles}" Margin="0,24,0,10" FontSize="18"/>
+     <TextBox Text="{Binding StoragePath, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap" AutomationProperties.Name="{local:Tr ProfilePath}"/>
+     <TextBlock Text="{local:Tr BackupHelp}" TextWrapping="Wrap" Foreground="{StaticResource Muted}" Margin="0,16,0,0"/>
+     <TextBlock Text="{local:Tr PreviewStatus}" Margin="0,24,0,0" TextWrapping="Wrap"/>
     </StackPanel>
    </TabItem>
   </TabControl>

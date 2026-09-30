@@ -1,9 +1,11 @@
+using static Companion.Core.Localization.Text;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Companion.Core;
 using Companion.Transport;
+using Companion.Core.Localization;
 
 namespace Companion.Desktop;
 
@@ -12,6 +14,8 @@ public abstract class Observable : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void Changed([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new(name));
 }
+
+public sealed record LanguageChoice(string Code, string Name);
 
 public sealed class WidgetViewModel(Widget value, Func<CombatSnapshot?> snapshot, Func<string> source) : Observable
 {
@@ -23,14 +27,14 @@ public sealed class WidgetViewModel(Widget value, Func<CombatSnapshot?> snapshot
     public bool Editing { get; private set; }
     public bool Display => Editing || !Value.Hidden;
     public bool Known => Value.Kind is "damage-players" or "damage-groups";
-    public string Title => Value.Kind == "damage-groups" ? "Dégâts par sous-groupe" : Known ? "Dégâts par joueur" : "Intégration absente";
-    public string Source => !Known ? "Ce type de widget n’est pas disponible. Sa disposition est conservée."
+    public string Title => Value.Kind == "damage-groups" ? T("WidgetGroups") : Known ? T("WidgetPlayers") : T("MissingIntegration");
+    public string Source => !Known ? T("MissingWidgetHelp")
         : source();
-    public string HideLabel => Value.Hidden ? "Afficher" : "Masquer";
+    public string HideLabel => Value.Hidden ? T("Show") : T("Hide");
     public int Group { get => Value.Settings.Subgroup ?? 0; set { Value = Value with { Settings = Value.Settings with { Subgroup = value == 0 ? null : value } }; Refresh(); } }
     public int Rows { get => Value.Settings.Rows; set { Value = Value with { Settings = Value.Settings with { Rows = Math.Clamp(value, 1, 50) } }; Refresh(); } }
     public IReadOnlyList<DamageRow> Data => Known && snapshot() is { } combat ? combat.Select(Value.Settings, Value.Kind == "damage-groups") : [];
-    public string EmptyMessage => Known && snapshot() is not null ? "Aucun joueur dans ce filtre." : Source;
+    public string EmptyMessage => Known && snapshot() is not null ? T("NoPlayers") : Source;
     public bool Empty => Data.Count == 0;
     public static IReadOnlyList<int> Groups { get; } = Enumerable.Range(0, 16).ToArray();
     public static IReadOnlyList<int> RowOptions { get; } = [5, 8, 10, 15, 20, 50];
@@ -60,6 +64,23 @@ public sealed class DashboardViewModel : Observable
     private static readonly CombatSnapshot DemoCombat = CombatReplay.Demo();
     private BridgeStatus bridge = new(BridgeConnection.Waiting, null, null, null, 0, false, null);
     private string status = "";
+    private string selectedLanguage = Language;
+    public static IReadOnlyList<LanguageChoice> Languages { get; } = [new("en", "English"), new("fr", "Français")];
+    public string SelectedLanguage
+    {
+        get => selectedLanguage;
+        set
+        {
+            if (value == selectedLanguage || value is not ("en" or "fr")) return;
+            try
+            {
+                LanguagePreferences.Save(Path.Combine(Path.GetDirectoryName(StoragePath)!, "language.txt"), value);
+                selectedLanguage = value; Changed(); Status = T("LanguageRestart");
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+            { Status = T("LanguageSaveFailed", e.Message); Changed(); }
+        }
+    }
     public ObservableCollection<Profile> Profiles { get; }
     public ObservableCollection<WidgetViewModel> Widgets { get; } = [];
     public string StoragePath { get; }
@@ -87,7 +108,7 @@ public sealed class DashboardViewModel : Observable
         get => editing;
         set { editing = value; foreach (var w in Widgets) w.SetEditing(value); Changed(); Changed(nameof(EditLabel)); Save(); }
     }
-    public string EditLabel => Editing ? "Terminer l’édition" : "Modifier le dashboard";
+    public string EditLabel => Editing ? T("FinishEditing") : T("EditDashboard");
     public bool ReplayEnabled
     {
         get => replayEnabled;
@@ -100,25 +121,25 @@ public sealed class DashboardViewModel : Observable
     }
     public string BridgeSummary => bridge.Connection switch
     {
-        BridgeConnection.Waiting => "En attente du simulateur local",
-        BridgeConnection.Connected => bridge.Finished ? "Simulation terminée" : "Simulateur local connecté",
-        BridgeConnection.Stale => "Données périmées : le simulateur ne répond plus",
-        BridgeConnection.Disconnected => bridge.Finished ? "Simulation terminée · connexion fermée" : "Connexion locale interrompue",
-        BridgeConnection.Rejected => "Messages refusés : " + bridge.Error,
-        BridgeConnection.Faulted => "Canal local indisponible : " + bridge.Error,
-        _ => "Écoute locale arrêtée"
+        BridgeConnection.Waiting => T("WaitingSimulator"),
+        BridgeConnection.Connected => bridge.Finished ? T("SimulationEnded") : T("SimulatorConnected"),
+        BridgeConnection.Stale => T("SimulatorStale"),
+        BridgeConnection.Disconnected => bridge.Finished ? T("SimulationClosed") : T("LocalDisconnected"),
+        BridgeConnection.Rejected => T("MessagesRejected") + bridge.Error,
+        BridgeConnection.Faulted => T("LocalUnavailable") + bridge.Error,
+        _ => T("ListenerStopped")
     };
     public string ConnectionLabel => UseLocalBridge
-        ? $"{BridgeSummary} · Simulation uniquement, aucun jeu connecté" + (bridge.Combat?.Partial == true ? " · Données partielles" : "")
-        : ReplayEnabled ? "Données de démonstration · Aucun jeu connecté" : "Aucune source active · Aucun jeu connecté";
+        ? T("LocalConnectionLabel", BridgeSummary) + (bridge.Combat?.Partial == true ? T("PartialSuffix") : "")
+        : ReplayEnabled ? T("DemoConnected") : T("NoSource");
     private CombatSnapshot? CurrentSnapshot() => UseLocalBridge ? bridge.Combat : ReplayEnabled ? DemoCombat : null;
     private string SourceDescription()
     {
-        if (!UseLocalBridge) return ReplayEnabled ? "Source : rejeu fictif · Combat 02:34 · Historique" : "Source désactivée · Les réglages sont conservés";
-        var duration = bridge.Combat is { } combat ? $" · Durée {TimeSpan.FromMilliseconds(combat.DurationMs):c}" : "";
-        var received = bridge.LastReceivedAt is { } at ? $" · Reçu à {at.ToLocalTime():HH:mm:ss}" : "";
-        return $"Source : simulation locale · {BridgeSummary}{duration}{received}" +
-            (bridge.Combat?.Partial == true ? $" · Combat incomplet · Pertes signalées : {bridge.DroppedEvents}" : "");
+        if (!UseLocalBridge) return ReplayEnabled ? T("DemoSource") : T("DisabledSource");
+        var duration = bridge.Combat is { } combat ? T("DurationSuffix", TimeSpan.FromMilliseconds(combat.DurationMs).ToString("c", Culture)) : "";
+        var received = bridge.LastReceivedAt is { } at ? T("ReceivedSuffix", at.ToLocalTime().ToString("HH:mm:ss", Culture)) : "";
+        return T("LocalSource", BridgeSummary, duration, received) +
+            (bridge.Combat?.Partial == true ? T("IncompleteSuffix", bridge.DroppedEvents) : "");
     }
     public void UpdateBridge(BridgeStatus status)
     {
@@ -150,61 +171,61 @@ public sealed class DashboardViewModel : Observable
     public bool Save()
     {
         Capture(); LayoutChanged();
-        try { store.Save(new(1, selected.Id, Profiles.ToList(), ReplayEnabled)); Status = "Enregistré sur cet ordinateur"; return true; }
+        try { store.Save(new(1, selected.Id, Profiles.ToList(), ReplayEnabled)); Status = T("Saved"); return true; }
         catch (Exception e) when (e is IOException or InvalidDataException or UnauthorizedAccessException)
-        { Status = $"Échec de l’enregistrement : {e.Message}"; return false; }
+        { Status = T("SaveFailed", e.Message); return false; }
     }
     public void NewProfile(bool duplicate)
     {
-        Capture(); if (Profiles.Count >= 100) { Status = "Limite de 100 profils atteinte."; return; }
-        var next = duplicate ? selected.Duplicate(selected.Name.Length > 70 ? "Copie du profil" : selected.Name + " — copie") : Profile.Create("Nouveau profil");
+        Capture(); if (Profiles.Count >= 100) { Status = T("MaxProfiles"); return; }
+        var next = duplicate ? selected.Duplicate(selected.Name.Length > 70 ? T("ProfileCopy") : selected.Name + T("CopySuffix")) : Profile.Create(T("NewProfile"));
         Profiles.Add(next); Selected = next; Editing = true;
     }
     public void Rename(string name)
     {
-        name = name.Trim(); if (name.Length is < 1 or > 80) { Status = "Le nom doit contenir de 1 à 80 caractères."; return; }
+        name = name.Trim(); if (name.Length is < 1 or > 80) { Status = T("NameLength"); return; }
         Capture(); var index = Profiles.IndexOf(selected); selected = selected with { Name = name }; Profiles[index] = selected;
         Changed(nameof(Selected)); Changed(nameof(ProfileName)); Save();
     }
     public void DeleteProfile()
     {
         var old = selected;
-        if (Profiles.Count == 1) Profiles.Add(Profile.Create("Mon profil"));
+        if (Profiles.Count == 1) Profiles.Add(Profile.Create(T("MyProfile")));
         Selected = Profiles.First(p => p.Id != old.Id); Profiles.Remove(old); Save();
     }
     public void AddPage()
     {
-        if (selected.Pages.Count >= 50) { Status = "Limite de 50 pages atteinte."; return; }
-        var next = new ProfilePage(Guid.NewGuid(), $"Page {selected.Pages.Count + 1}", []);
+        if (selected.Pages.Count >= 50) { Status = T("MaxPages"); return; }
+        var next = new ProfilePage(Guid.NewGuid(), T("PageNumber", selected.Pages.Count + 1), []);
         selected.Pages.Add(next); Changed(nameof(Pages)); Page = next;
     }
     public void RenamePage(string name)
     {
         name = name.Trim();
-        if (name.Length is < 1 or > 80) { Status = "Le nom doit contenir de 1 à 80 caractères."; return; }
+        if (name.Length is < 1 or > 80) { Status = T("NameLength"); return; }
         Capture(); var index = selected.Pages.IndexOf(page);
         page = page with { Name = name }; selected.Pages[index] = page;
         Changed(nameof(Pages)); Changed(nameof(Page)); Changed(nameof(PageName)); Save();
     }
     public void DuplicatePage()
     {
-        if (selected.Pages.Count >= 50) { Status = "Limite de 50 pages atteinte."; return; }
+        if (selected.Pages.Count >= 50) { Status = T("MaxPages"); return; }
         Capture();
-        var copy = new ProfilePage(Guid.NewGuid(), page.Name.Length > 70 ? "Copie de page" : page.Name + " — copie",
+        var copy = new ProfilePage(Guid.NewGuid(), page.Name.Length > 70 ? T("PageCopy") : page.Name + T("CopySuffix"),
             page.Widgets.Select(w => w.Duplicate() with { Layout = w.Layout with { } }).ToList());
         selected.Pages.Add(copy); Changed(nameof(Pages)); Page = copy;
     }
     public void DeletePage()
     {
         var old = page;
-        if (selected.Pages.Count == 1) selected.Pages.Add(new(Guid.NewGuid(), "Vue d’ensemble", []));
+        if (selected.Pages.Count == 1) selected.Pages.Add(new(Guid.NewGuid(), T("Overview"), []));
         Page = selected.Pages.First(p => p.Id != old.Id);
         selected.Pages.Remove(old); Changed(nameof(Pages)); Changed(nameof(Page)); Save();
     }
     public byte[] ExportProfile() { Capture(); return ProfileTransfer.Export(selected); }
     public void ImportProfile(ProfileImport imported)
     {
-        if (Profiles.Count >= 100) throw new InvalidDataException("Limite de 100 profils atteinte.");
+        if (Profiles.Count >= 100) throw new InvalidDataException(T("MaxProfiles"));
         // Regenerate once more so reusing an import result cannot introduce duplicate IDs.
         var copy = imported.Profile.Duplicate(imported.Profile.Name);
         new Workspace(1, copy.Id, [copy]).Validate();
@@ -212,7 +233,7 @@ public sealed class DashboardViewModel : Observable
     }
     public void AddWidget(string kind, WidgetViewModel? source = null)
     {
-        if (Widgets.Count >= 200) { Status = "Limite de 200 widgets atteinte."; return; }
+        if (Widgets.Count >= 200) { Status = T("MaxWidgets"); return; }
         var w = source?.Value.Duplicate() ?? new Widget(Guid.NewGuid(), kind, new(), new(0, Widgets.Count * 32, 600, 480));
         var vm = new WidgetViewModel(w, CurrentSnapshot, SourceDescription); vm.SetEditing(Editing); Widgets.Add(vm); Save();
     }

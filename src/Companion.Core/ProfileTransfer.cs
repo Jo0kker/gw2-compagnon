@@ -1,3 +1,4 @@
+using static Companion.Core.Localization.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -27,30 +28,30 @@ public static class ProfileTransfer
             p.Widgets.Select(w => new WidgetDocument(w.Kind, w.Layout with { }, w.Hidden,
                 Known(w.Kind) ? new WidgetSettings(w.Settings.Subgroup, w.Settings.Rows) : null)).ToList())).ToList());
         var bytes = JsonSerializer.SerializeToUtf8Bytes(document, Options);
-        if (bytes.Length > MaxBytes) throw new InvalidDataException("Le profil exporté dépasse 1 Mo.");
+        if (bytes.Length > MaxBytes) throw new InvalidDataException(T("ExportTooLarge"));
         return bytes;
     }
 
     public static ProfileImport Import(ReadOnlySpan<byte> bytes)
     {
-        if (bytes.Length > MaxBytes) throw new InvalidDataException("Le profil importé dépasse 1 Mo.");
+        if (bytes.Length > MaxBytes) throw new InvalidDataException(T("ImportTooLarge"));
         Document document;
-        try { document = JsonSerializer.Deserialize<Document>(bytes, Options) ?? throw new InvalidDataException("Document vide."); }
-        catch (JsonException e) { throw new InvalidDataException("Le fichier ne respecte pas le format de profil portable.", e); }
-        if (document.Version != 1) throw new InvalidDataException("Version de profil portable non prise en charge.");
+        try { document = JsonSerializer.Deserialize<Document>(bytes, Options) ?? throw new InvalidDataException(T("EmptyDocument")); }
+        catch (JsonException e) { throw new InvalidDataException(T("InvalidPortable"), e); }
+        if (document.Version != 1) throw new InvalidDataException(T("PortableVersion"));
         if (document.Pages is null || document.Pages.Count is < 1 or > 50)
-            throw new InvalidDataException("Le profil doit contenir de 1 à 50 pages.");
+            throw new InvalidDataException(T("PageCount"));
         var pages = new List<ProfilePage>();
         var missing = new HashSet<string>(StringComparer.Ordinal);
         foreach (var p in document.Pages)
         {
             if (p is null || p.Widgets is null || p.Widgets.Count > 200)
-                throw new InvalidDataException("Page invalide ou trop de widgets.");
+                throw new InvalidDataException(T("InvalidPortablePage"));
             var widgets = new List<Widget>();
             foreach (var w in p.Widgets)
             {
                 if (w is null || string.IsNullOrWhiteSpace(w.Kind) || w.Layout is null)
-                    throw new InvalidDataException("Widget portable invalide.");
+                    throw new InvalidDataException(T("InvalidPortableWidget"));
                 if (!Known(w.Kind)) missing.Add(w.Kind);
                 widgets.Add(new(Guid.NewGuid(), w.Kind, Known(w.Kind) ? w.Settings ?? new() : new(), w.Layout with { }, w.Hidden));
             }
@@ -64,7 +65,7 @@ public static class ProfileTransfer
     public static ProfileImport ReadFile(string path)
     {
         using var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-        if (file.Length > MaxBytes) throw new InvalidDataException("Le profil importé dépasse 1 Mo.");
+        if (file.Length > MaxBytes) throw new InvalidDataException(T("ImportTooLarge"));
         // Bound the actual read as well as the initial length check.
         var buffer = new byte[MaxBytes + 1];
         var count = file.ReadAtLeast(buffer, buffer.Length, throwOnEndOfStream: false);

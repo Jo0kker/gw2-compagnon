@@ -1,3 +1,4 @@
+using static Companion.Core.Localization.Text;
 using System.Text.Json;
 
 namespace Companion.Core;
@@ -12,9 +13,9 @@ public sealed class ProfileStore(string path)
     {
         if (!File.Exists(path)) return Workspace.CreateDefault();
         using var file = File.OpenRead(path);
-        if (file.Length > MaxBytes) throw new InvalidDataException("Le fichier de profils est trop volumineux.");
+        if (file.Length > MaxBytes) throw new InvalidDataException(T("ProfileFileLarge"));
         var state = JsonSerializer.Deserialize<Workspace>(file, JsonOptions)
-            ?? throw new InvalidDataException("Le fichier de profils est vide.");
+            ?? throw new InvalidDataException(T("ProfileFileEmpty"));
         state.Validate();
         return state;
     }
@@ -23,7 +24,7 @@ public sealed class ProfileStore(string path)
     {
         state.Validate();
         var bytes = JsonSerializer.SerializeToUtf8Bytes(state, JsonOptions);
-        if (bytes.Length > MaxBytes) throw new InvalidDataException("Les profils dépassent la limite de stockage.");
+        if (bytes.Length > MaxBytes) throw new InvalidDataException(T("ProfileStorageLimit"));
         var fullPath = Path.GetFullPath(path);
         Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
         var temporary = fullPath + "." + Guid.NewGuid().ToString("N") + ".tmp";

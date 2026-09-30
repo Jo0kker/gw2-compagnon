@@ -1,3 +1,4 @@
+using static Companion.Core.Localization.Text;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
@@ -21,6 +22,7 @@ public partial class MainWindow : Window
     public MainWindow(DashboardViewModel model)
     {
         InitializeComponent(); this.model = model; DataContext = model;
+        Language = System.Windows.Markup.XmlLanguage.GetLanguage(Culture.Name);
         receiverTask = Task.Run(() => receiver.RunAsync(receiverStop.Token));
         refreshTimer.Tick += (_, _) => model.UpdateBridge(receiver.Snapshot());
         refreshTimer.Start();
@@ -37,8 +39,8 @@ public partial class MainWindow : Window
     private void SaveBeforeClose(object? sender, CancelEventArgs e)
     {
         if (!model.Save()) e.Cancel = MessageBox.Show(this,
-            "L’enregistrement a échoué. Fermer et perdre les changements non enregistrés ?",
-            "Profils non enregistrés", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes;
+            T("DiscardChanges"),
+            T("UnsavedProfiles"), MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes;
     }
     private void ToggleEdit(object sender, RoutedEventArgs e) => model.Editing = !model.Editing;
     private void NewProfile(object sender, RoutedEventArgs e) => model.NewProfile(false);
@@ -49,42 +51,41 @@ public partial class MainWindow : Window
     private void DuplicatePage(object sender, RoutedEventArgs e) => model.DuplicatePage();
     private void DeletePage(object sender, RoutedEventArgs e)
     {
-        if (MessageBox.Show(this, $"Supprimer la page « {model.Page.Name} » et ses widgets ?", "Supprimer la page",
+        if (MessageBox.Show(this, T("DeletePageQuestion", model.Page.Name), T("DeletePage"),
             MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes) model.DeletePage();
     }
     private void ExportProfile(object sender, RoutedEventArgs e)
     {
-        var dialog = new SaveFileDialog { Filter = "Profil compagnon (*.gw2profile.json)|*.gw2profile.json", FileName = "profil.gw2profile.json", AddExtension = true };
+        var dialog = new SaveFileDialog { Filter = T("ProfileFileFilter"), FileName = "profil.gw2profile.json", AddExtension = true };
         if (dialog.ShowDialog(this) != true) return;
         try
         {
             if (Path.GetFullPath(dialog.FileName).Equals(Path.GetFullPath(model.StoragePath), StringComparison.OrdinalIgnoreCase))
-                throw new InvalidDataException("Choisissez un fichier différent du stockage interne des profils.");
+                throw new InvalidDataException(T("ExportInternalPath"));
             var bytes = model.ExportProfile();
             File.WriteAllBytes(dialog.FileName, bytes);
-            MessageBox.Show(this, "Profil exporté. Les réglages opaques des widgets inconnus sont exclus ; leurs emplacements sont conservés.", "Export terminé");
+            MessageBox.Show(this, T("ExportCompletedMessage"), T("ExportCompleted"));
         }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException)
-        { MessageBox.Show(this, error.Message, "Export impossible", MessageBoxButton.OK, MessageBoxImage.Error); }
+        { MessageBox.Show(this, error.Message, T("ExportFailed"), MessageBoxButton.OK, MessageBoxImage.Error); }
     }
     private void ImportProfile(object sender, RoutedEventArgs e)
     {
-        var dialog = new OpenFileDialog { Filter = "Profil compagnon (*.json)|*.json", Multiselect = false };
+        var dialog = new OpenFileDialog { Filter = T("JsonFileFilter"), Multiselect = false };
         if (dialog.ShowDialog(this) != true) return;
         try
         {
             var imported = ProfileTransfer.ReadFile(dialog.FileName);
             model.ImportProfile(imported);
             if (imported.MissingWidgetKinds.Count > 0)
-                MessageBox.Show(this, "Widgets indisponibles : " + string.Join(", ", imported.MissingWidgetKinds) +
-                    ". Leurs emplacements sont conservés. Les réglages non reconnus ne sont pas importés.", "Dépendances manquantes");
+                MessageBox.Show(this, T("MissingWidgetsMessage", string.Join(", ", imported.MissingWidgetKinds)), T("MissingDependencies"));
         }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException)
-        { MessageBox.Show(this, error.Message, "Import impossible", MessageBoxButton.OK, MessageBoxImage.Error); }
+        { MessageBox.Show(this, error.Message, T("ImportFailed"), MessageBoxButton.OK, MessageBoxImage.Error); }
     }
     private void DeleteProfile(object sender, RoutedEventArgs e)
     {
-        if (MessageBox.Show(this, $"Supprimer le profil « {model.Selected.Name} » ?", "Supprimer le profil",
+        if (MessageBox.Show(this, T("DeleteProfileQuestion", model.Selected.Name), T("DeleteProfile"),
             MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes) model.DeleteProfile();
     }
     private void AddWidget(object sender, RoutedEventArgs e) => model.AddWidget((string)((Button)sender).Tag);

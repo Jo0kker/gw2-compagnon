@@ -1,0 +1,522 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <data name="AppTitle" xml:space="preserve">
+    <value>GW2 Companion — development preview</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="ActiveProfile" xml:space="preserve">
+    <value>Active profile</value>
+  </data>
+  <data name="ActivePage" xml:space="preserve">
+    <value>Active page</value>
+  </data>
+  <data name="ProfileName" xml:space="preserve">
+    <value>Profile name</value>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="NewProfile" xml:space="preserve">
+    <value>New profile</value>
+  </data>
+  <data name="DuplicateProfile" xml:space="preserve">
+    <value>Duplicate profile</value>
+  </data>
+  <data name="DeleteProfile" xml:space="preserve">
+    <value>Delete profile</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="PageName" xml:space="preserve">
+    <value>Page name</value>
+  </data>
+  <data name="RenamePage" xml:space="preserve">
+    <value>Rename page</value>
+  </data>
+  <data name="DuplicatePage" xml:space="preserve">
+    <value>Duplicate page</value>
+  </data>
+  <data name="DeletePage" xml:space="preserve">
+    <value>Delete page</value>
+  </data>
+  <data name="AddPage" xml:space="preserve">
+    <value>Add page</value>
+  </data>
+  <data name="AddPlayers" xml:space="preserve">
+    <value>Add player table</value>
+  </data>
+  <data name="AddGroups" xml:space="preserve">
+    <value>Add subgroup table</value>
+  </data>
+  <data name="MoveHint" xml:space="preserve">
+    <value>Drag the handle to move · Drag the corner to resize · Arrow keys on a handle: 16 px</value>
+  </data>
+  <data name="NoWidgets" xml:space="preserve">
+    <value>No visible widgets. Enter edit mode to add or show widgets.</value>
+  </data>
+  <data name="MoveWidget" xml:space="preserve">
+    <value>Move widget</value>
+  </data>
+  <data name="Duplicate" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="GroupFilter" xml:space="preserve">
+    <value>Subgroup (0 = all)</value>
+  </data>
+  <data name="SubgroupFilter" xml:space="preserve">
+    <value>Subgroup filter</value>
+  </data>
+  <data name="Rows" xml:space="preserve">
+    <value>Rows</value>
+  </data>
+  <data name="RowCount" xml:space="preserve">
+    <value>Number of rows</value>
+  </data>
+  <data name="DemoDamage" xml:space="preserve">
+    <value>Simulated encounter damage</value>
+  </data>
+  <data name="PlayerGroup" xml:space="preserve">
+    <value>Player / subgroup</value>
+  </data>
+  <data name="GroupShort" xml:space="preserve">
+    <value>SG</value>
+  </data>
+  <data name="Damage" xml:space="preserve">
+    <value>Damage</value>
+  </data>
+  <data name="Dps" xml:space="preserve">
+    <value>DPS</value>
+  </data>
+  <data name="ResizeWidget" xml:space="preserve">
+    <value>Resize widget</value>
+  </data>
+  <data name="Encounters" xml:space="preserve">
+    <value>Encounters</value>
+  </data>
+  <data name="EncountersReports" xml:space="preserve">
+    <value>Encounters and reports</value>
+  </data>
+  <data name="NoEncounters" xml:space="preserve">
+    <value>No local encounters indexed.</value>
+  </data>
+  <data name="EncountersPlanned" xml:space="preserve">
+    <value>This preview only uses simulated encounters. Log indexing, sessions and WvW Insights uploads are planned. No files are uploaded.</value>
+  </data>
+  <data name="Integrations" xml:space="preserve">
+    <value>Integrations</value>
+  </data>
+  <data name="DataSources" xml:space="preserve">
+    <value>Data sources</value>
+  </data>
+  <data name="EnableReplay" xml:space="preserve">
+    <value>Enable built-in demo replay</value>
+  </data>
+  <data name="ReplayHelp" xml:space="preserve">
+    <value>Provides player and subgroup damage tables. Disabling this source preserves widgets and filters.</value>
+  </data>
+  <data name="EnableSimulator" xml:space="preserve">
+    <value>Use the local simulator instead of the built-in replay</value>
+  </data>
+  <data name="SimulatorHelp" xml:space="preserve">
+    <value>Run Companion.BridgeSimulator as the same user. Simulated events travel through the real local connection. Disconnections preserve the last values and mark the encounter incomplete.</value>
+  </data>
+  <data name="ArcPlanned" xml:space="preserve">
+    <value>ArcDPS and native bridge — not implemented</value>
+  </data>
+  <data name="ArcHelp" xml:space="preserve">
+    <value>This preview does not detect or modify game files. In-game compatibility has not been validated.</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="StorageDiagnostics" xml:space="preserve">
+    <value>Storage and diagnostics</value>
+  </data>
+  <data name="LocalProfiles" xml:space="preserve">
+    <value>Locally stored profiles</value>
+  </data>
+  <data name="ProfilePath" xml:space="preserve">
+    <value>Profile storage path</value>
+  </data>
+  <data name="BackupHelp" xml:space="preserve">
+    <value>The previous save is kept in the .bak file. Profiles are saved when editing ends and on exit. Profiles contain no API keys, tokens or upload URLs.</value>
+  </data>
+  <data name="PreviewStatus" xml:space="preserve">
+    <value>Development preview · No game connected · Windows UI validation pending</value>
+  </data>
+  <data name="WidgetGroups" xml:space="preserve">
+    <value>Damage by subgroup</value>
+  </data>
+  <data name="WidgetPlayers" xml:space="preserve">
+    <value>Damage by player</value>
+  </data>
+  <data name="MissingIntegration" xml:space="preserve">
+    <value>Missing integration</value>
+  </data>
+  <data name="MissingWidgetHelp" xml:space="preserve">
+    <value>This widget type is unavailable. Its layout has been preserved.</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="Hide" xml:space="preserve">
+    <value>Hide</value>
+  </data>
+  <data name="NoPlayers" xml:space="preserve">
+    <value>No players match this filter.</value>
+  </data>
+  <data name="FinishEditing" xml:space="preserve">
+    <value>Finish editing</value>
+  </data>
+  <data name="EditDashboard" xml:space="preserve">
+    <value>Edit dashboard</value>
+  </data>
+  <data name="WaitingSimulator" xml:space="preserve">
+    <value>Waiting for the local simulator</value>
+  </data>
+  <data name="SimulationEnded" xml:space="preserve">
+    <value>Simulation complete</value>
+  </data>
+  <data name="SimulatorConnected" xml:space="preserve">
+    <value>Local simulator connected</value>
+  </data>
+  <data name="SimulatorStale" xml:space="preserve">
+    <value>Stale data: the simulator stopped responding</value>
+  </data>
+  <data name="SimulationClosed" xml:space="preserve">
+    <value>Simulation complete · connection closed</value>
+  </data>
+  <data name="LocalDisconnected" xml:space="preserve">
+    <value>Local connection interrupted</value>
+  </data>
+  <data name="MessagesRejected" xml:space="preserve">
+    <value>Messages rejected: </value>
+  </data>
+  <data name="LocalUnavailable" xml:space="preserve">
+    <value>Local connection unavailable: </value>
+  </data>
+  <data name="ListenerStopped" xml:space="preserve">
+    <value>Local listener stopped</value>
+  </data>
+  <data name="PartialSuffix" xml:space="preserve">
+    <value> · Partial data</value>
+  </data>
+  <data name="DemoConnected" xml:space="preserve">
+    <value>Demo data · No game connected</value>
+  </data>
+  <data name="NoSource" xml:space="preserve">
+    <value>No active source · No game connected</value>
+  </data>
+  <data name="DemoSource" xml:space="preserve">
+    <value>Source: demo replay · Encounter 02:34 · Historical</value>
+  </data>
+  <data name="DisabledSource" xml:space="preserve">
+    <value>Source disabled · Settings preserved</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Saved on this computer</value>
+  </data>
+  <data name="MaxProfiles" xml:space="preserve">
+    <value>The limit of 100 profiles has been reached.</value>
+  </data>
+  <data name="ProfileCopy" xml:space="preserve">
+    <value>Profile copy</value>
+  </data>
+  <data name="CopySuffix" xml:space="preserve">
+    <value> — copy</value>
+  </data>
+  <data name="MyProfile" xml:space="preserve">
+    <value>My profile</value>
+  </data>
+  <data name="MaxPages" xml:space="preserve">
+    <value>The limit of 50 pages has been reached.</value>
+  </data>
+  <data name="PageCopy" xml:space="preserve">
+    <value>Page copy</value>
+  </data>
+  <data name="MaxWidgets" xml:space="preserve">
+    <value>The limit of 200 widgets has been reached.</value>
+  </data>
+  <data name="Overview" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="WvwProfile" xml:space="preserve">
+    <value>WvW session</value>
+  </data>
+  <data name="InvalidProfileVersion" xml:space="preserve">
+    <value>Unsupported profile version.</value>
+  </data>
+  <data name="InvalidProfileList" xml:space="preserve">
+    <value>Invalid profile list.</value>
+  </data>
+  <data name="InvalidId" xml:space="preserve">
+    <value>Duplicate or empty identifier.</value>
+  </data>
+  <data name="InvalidName" xml:space="preserve">
+    <value>Invalid name (1–80 characters).</value>
+  </data>
+  <data name="NameLength" xml:space="preserve">
+    <value>The name must contain 1–80 characters.</value>
+  </data>
+  <data name="EmptyProfile" xml:space="preserve">
+    <value>Empty profile.</value>
+  </data>
+  <data name="InvalidPages" xml:space="preserve">
+    <value>Invalid pages.</value>
+  </data>
+  <data name="EmptyPage" xml:space="preserve">
+    <value>Empty page.</value>
+  </data>
+  <data name="TooManyWidgets" xml:space="preserve">
+    <value>Too many widgets.</value>
+  </data>
+  <data name="InvalidWidget" xml:space="preserve">
+    <value>Invalid widget.</value>
+  </data>
+  <data name="InvalidWidgetSettings" xml:space="preserve">
+    <value>Invalid widget settings.</value>
+  </data>
+  <data name="InvalidLayout" xml:space="preserve">
+    <value>Invalid layout.</value>
+  </data>
+  <data name="ProfileFileLarge" xml:space="preserve">
+    <value>The profile file is too large.</value>
+  </data>
+  <data name="ProfileFileEmpty" xml:space="preserve">
+    <value>The profile file is empty.</value>
+  </data>
+  <data name="ProfileStorageLimit" xml:space="preserve">
+    <value>Profiles exceed the storage limit.</value>
+  </data>
+  <data name="ExportTooLarge" xml:space="preserve">
+    <value>The exported profile exceeds 1 MB.</value>
+  </data>
+  <data name="ImportTooLarge" xml:space="preserve">
+    <value>The imported profile exceeds 1 MB.</value>
+  </data>
+  <data name="EmptyDocument" xml:space="preserve">
+    <value>Empty document.</value>
+  </data>
+  <data name="InvalidPortable" xml:space="preserve">
+    <value>The file is not a valid portable profile.</value>
+  </data>
+  <data name="PortableVersion" xml:space="preserve">
+    <value>Unsupported portable profile version.</value>
+  </data>
+  <data name="PageCount" xml:space="preserve">
+    <value>The profile must contain 1–50 pages.</value>
+  </data>
+  <data name="InvalidPortablePage" xml:space="preserve">
+    <value>Invalid page or too many widgets.</value>
+  </data>
+  <data name="InvalidPortableWidget" xml:space="preserve">
+    <value>Invalid portable widget.</value>
+  </data>
+  <data name="UnknownSubgroup" xml:space="preserve">
+    <value>Unknown subgroup</value>
+  </data>
+  <data name="InvalidEvent" xml:space="preserve">
+    <value>Invalid normalized event.</value>
+  </data>
+  <data name="ProtocolVersion" xml:space="preserve">
+    <value>Unsupported protocol version.</value>
+  </data>
+  <data name="SyntheticOnly" xml:space="preserve">
+    <value>This experimental protocol only accepts a simulated source.</value>
+  </data>
+  <data name="InvalidHeader" xml:space="preserve">
+    <value>Invalid message header.</value>
+  </data>
+  <data name="FirstMessage" xml:space="preserve">
+    <value>The first message must open the session.</value>
+  </data>
+  <data name="InvalidSequence" xml:space="preserve">
+    <value>Invalid sequence number.</value>
+  </data>
+  <data name="InvalidPlayer" xml:space="preserve">
+    <value>Invalid player name.</value>
+  </data>
+  <data name="UnexpectedData" xml:space="preserve">
+    <value>Unexpected data for this message type.</value>
+  </data>
+  <data name="MessageLarge" xml:space="preserve">
+    <value>Message too large.</value>
+  </data>
+  <data name="MessageLength" xml:space="preserve">
+    <value>Invalid message length.</value>
+  </data>
+  <data name="MessageEmpty" xml:space="preserve">
+    <value>Empty message.</value>
+  </data>
+  <data name="InvalidJson" xml:space="preserve">
+    <value>Invalid JSON message.</value>
+  </data>
+  <data name="HandshakeRequired" xml:space="preserve">
+    <value>A handshake is required before events.</value>
+  </data>
+  <data name="LossCounterReversed" xml:space="preserve">
+    <value>The loss counter moved backwards.</value>
+  </data>
+  <data name="SessionMismatch" xml:space="preserve">
+    <value>Missing or mismatched session.</value>
+  </data>
+  <data name="EncounterEnded" xml:space="preserve">
+    <value>The encounter has already ended.</value>
+  </data>
+  <data name="ClockReversed" xml:space="preserve">
+    <value>The clock or loss counter moved backwards.</value>
+  </data>
+  <data name="PlayerLimit" xml:space="preserve">
+    <value>Session player limit reached.</value>
+  </data>
+  <data name="DamageOverflow" xml:space="preserve">
+    <value>Damage total is out of range.</value>
+  </data>
+  <data name="InvalidPipe" xml:space="preserve">
+    <value>Invalid pipe name.</value>
+  </data>
+  <data name="ReceiverRunning" xml:space="preserve">
+    <value>The receiver is already running.</value>
+  </data>
+  <data name="FrameTimeout" xml:space="preserve">
+    <value>No complete message was received before the timeout.</value>
+  </data>
+  <data name="PipeInterrupted" xml:space="preserve">
+    <value>The local connection was interrupted.</value>
+  </data>
+  <data name="PipeOpenFailed" xml:space="preserve">
+    <value>The local connection could not be opened.</value>
+  </data>
+  <data name="AlreadyOpen" xml:space="preserve">
+    <value>The companion is already open in this Windows session.</value>
+  </data>
+  <data name="ProfilesUnavailable" xml:space="preserve">
+    <value>Profiles unavailable</value>
+  </data>
+  <data name="DiscardChanges" xml:space="preserve">
+    <value>Saving failed. Close and discard unsaved changes?</value>
+  </data>
+  <data name="UnsavedProfiles" xml:space="preserve">
+    <value>Unsaved profiles</value>
+  </data>
+  <data name="ProfileFileFilter" xml:space="preserve">
+    <value>Companion profile (*.gw2profile.json)|*.gw2profile.json</value>
+  </data>
+  <data name="JsonFileFilter" xml:space="preserve">
+    <value>Companion profile (*.json)|*.json</value>
+  </data>
+  <data name="ExportInternalPath" xml:space="preserve">
+    <value>Choose a file other than the internal profile store.</value>
+  </data>
+  <data name="ExportCompletedMessage" xml:space="preserve">
+    <value>Profile exported. Opaque settings from unknown widgets are excluded; their layout is preserved.</value>
+  </data>
+  <data name="ExportCompleted" xml:space="preserve">
+    <value>Export complete</value>
+  </data>
+  <data name="ExportFailed" xml:space="preserve">
+    <value>Export failed</value>
+  </data>
+  <data name="MissingDependencies" xml:space="preserve">
+    <value>Missing dependencies</value>
+  </data>
+  <data name="ImportFailed" xml:space="preserve">
+    <value>Import failed</value>
+  </data>
+  <data name="SimulatorUsage" xml:space="preserve">
+    <value>Usage: dotnet run --project tools/Companion.BridgeSimulator -- [--drop] [--interrupt] [--stall]</value>
+  </data>
+  <data name="SimulatorIntro" xml:space="preserve">
+    <value>SIMULATION only. Not connected to Guild Wars 2. Open the application first.</value>
+  </data>
+  <data name="SimulatorReady" xml:space="preserve">
+    <value>Local connection opened. Select the local simulator source in the application.</value>
+  </data>
+  <data name="SimulateInterrupt" xml:space="preserve">
+    <value>Deliberate disconnection during the encounter.</value>
+  </data>
+  <data name="SimulateStall" xml:space="preserve">
+    <value>Deliberate 4-second pause to test the timeout.</value>
+  </data>
+  <data name="SimulatorComplete" xml:space="preserve">
+    <value>Simulated encounter complete. The dashboard keeps the last values.</value>
+  </data>
+  <data name="SimulatorStopped" xml:space="preserve">
+    <value>Simulation stopped.</value>
+  </data>
+  <data name="SimulatorFailed" xml:space="preserve">
+    <value>Connection failed or interrupted. Make sure the application is open as the same user.</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language / Langue</value>
+  </data>
+  <data name="LanguageRestart" xml:space="preserve">
+    <value>Language saved. Restart the application to apply it.</value>
+  </data>
+  <data name="LanguageHelp" xml:space="preserve">
+    <value>Language changes apply on the next launch. Your profile names are not translated.</value>
+  </data>
+  <data name="LanguageSaveFailed" xml:space="preserve">
+    <value>Could not save the language: {0}</value>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>Could not save: {0}</value>
+  </data>
+  <data name="PageNumber" xml:space="preserve">
+    <value>Page {0}</value>
+  </data>
+  <data name="SubgroupNumber" xml:space="preserve">
+    <value>Subgroup {0}</value>
+  </data>
+  <data name="FictionalPlayer" xml:space="preserve">
+    <value>{0} — simulated</value>
+  </data>
+  <data name="LocalConnectionLabel" xml:space="preserve">
+    <value>{0} · Simulation only, no game connected</value>
+  </data>
+  <data name="DurationSuffix" xml:space="preserve">
+    <value> · Duration {0}</value>
+  </data>
+  <data name="ReceivedSuffix" xml:space="preserve">
+    <value> · Received at {0}</value>
+  </data>
+  <data name="LocalSource" xml:space="preserve">
+    <value>Source: local simulation · {0}{1}{2}</value>
+  </data>
+  <data name="IncompleteSuffix" xml:space="preserve">
+    <value> · Incomplete encounter · Reported losses: {0}</value>
+  </data>
+  <data name="DeleteProfileQuestion" xml:space="preserve">
+    <value>Delete profile “{0}”?</value>
+  </data>
+  <data name="DeletePageQuestion" xml:space="preserve">
+    <value>Delete page “{0}” and its widgets?</value>
+  </data>
+  <data name="MissingWidgetsMessage" xml:space="preserve">
+    <value>Unavailable widgets: {0}. Their layout is preserved. Unrecognized settings are not imported.</value>
+  </data>
+  <data name="ProfileLoadFailed" xml:space="preserve">
+    <value>Profiles could not be opened. The existing file has been preserved.
+
+{0}
+
+{1}
+
+A previous backup may be available in profiles.json.bak.</value>
+  </data>
+</root>

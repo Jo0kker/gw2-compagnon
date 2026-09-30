@@ -1,68 +1,67 @@
-# Compagnon Guild Wars 2 — nom à définir
+# GW2 Companion (working name)
 
-Application Windows x64 autonome. **Première tranche de développement, pas encore une version utilisable avec GW2.**
+Standalone Windows x64 companion for Guild Wars 2, licensed under [MIT](LICENSE).
+**Development preview: combat data is fictional; the native ArcDPS bridge is not implemented yet.**
 
-## Direction retenue
+[Français](README.fr.md) · [Architecture](docs/en/architecture.md) · [Signing](docs/en/signing.md)
 
-Maquette 01 simplifiée : **aucun menu latéral**, navigation compacte en haut, deux tableaux par défaut, pas de diagramme circulaire ni d’historique ajouté au dashboard. Réglages visibles en mode édition.
+## Current features
 
-[Voir la maquette révisée](docs/maquettes/01-dashboard-simplifie.png). Image de conception, pas capture de l’application.
+- Simple dark WPF dashboard with top navigation and no left sidebar.
+- Independent profiles and pages; create, rename, duplicate, delete and persist layouts.
+- Multiple damage widgets with independent subgroup filters; move, resize, hide and duplicate.
+- Clearly labelled built-in replay and separate local simulator using real Named Pipes.
+- Sequence/loss, disconnection and timeout detection; incomplete data remains visible.
+- Validated portable profile import/export, limited to 1 MiB and explicitly allowed fields.
+- English and French interface, including application errors and dialogs. Choose Settings → Language and restart. English is the default; existing user names are preserved.
 
-## Implémenté dans le code
+Not implemented: native ArcDPS DLL, real game data, addon installation, log indexing,
+WvW Insights uploads, automatic updates, monitor recovery or installers. No game files
+are modified and no logs are uploaded. Unknown widgets keep their layout but opaque
+third-party settings are not yet portable.
 
-- Solution .NET 10, cœur C# indépendant de WPF et shell de bureau Windows.
-- Profils : création vide, renommage, duplication profonde, suppression avec confirmation ; création, renommage, duplication et suppression des pages.
-- Widgets : ajout, duplication, déplacement/redimensionnement à la souris ou au clavier, masquage, retrait et filtres indépendants.
-- Tableaux joueurs et sous-groupes calculés sur un combat **fictif** ; désactiver le rejeu conserve widgets et réglages.
-- Récepteur Named Pipe et simulateur séparé : échanges locaux réels de données fictives, sessions, détection des pertes/coupures et conservation des dernières valeurs. **La DLL ArcDPS n’est pas encore implémentée.**
-- Import/export portable (JSON, 1 Mo maximum) : identifiants régénérés, disposition conservée, validation avant import et liste blanche des champs exportés. Les réglages opaques des widgets inconnus ne sont pas repris.
-- Profils persistants dans `%LOCALAPPDATA%/GW2Companion/profiles.json`, validation et remplacement atomique avec copie précédente `.bak`. Un fichier invalide n’est pas écrasé silencieusement.
-- Tests exécutables sans dépendance NuGet et workflow CI Linux/Windows.
+## Build and run
 
-Le stockage JSON est une première étape locale. SQLite reste prévu pour logs, sessions et transactions ; une migration sera nécessaire. Aucun secret ne fait partie du modèle actuel.
-
-## Lancer sous Windows
-
-Installer le **SDK .NET 10**, puis depuis la racine :
+Install the .NET 10 SDK. Windows is required for the WPF desktop app:
 
 ```powershell
 dotnet run --project src/Companion.Desktop
 ```
 
-Le combat fictif est activé à la première ouverture et toujours signalé. Ouvrir **Modifier le dashboard** pour organiser les widgets. Enregistrement en terminant l’édition et à la fermeture ; les commandes de disposition enregistrent aussi immédiatement. Les poignées acceptent les flèches du clavier (16 DIP par pas).
+Cross-platform checks (the tests are a console runner, not `dotnet test`):
 
-```powershell
-# Tests du domaine et du modèle de présentation, Windows ou Linux
+```sh
+python scripts/check-localization.py
 dotnet run --project tests/Companion.Core.Tests --configuration Release
-
-# Compilation de l’application sur Windows
-dotnet build src/Companion.Desktop --configuration Release
+dotnet build tools/Companion.BridgeSimulator --configuration Release
 ```
 
-Les tests sont un exécutable de scénarios : utiliser `dotnet run`, pas `dotnet test`.
+For the local connection, select **Use local simulator** in Integrations, then run:
 
-Pour tester la connexion locale : lancer l’application, choisir **Utiliser le simulateur local** dans Intégrations, puis `dotnet run --project tools/Companion.BridgeSimulator` dans un second terminal. Options `--drop`, `--interrupt` et `--stall` pour éprouver les erreurs. Voir le [guide de transport local](docs/10-transport-local.md).
+```sh
+dotnet run --project tools/Companion.BridgeSimulator
+```
 
-Le workflow Windows prépare aussi un artefact `gw2-companion-windows-x64-preview-…` avec le runtime .NET inclus, téléchargeable depuis GitHub Actions **si le workflow réussit**. Extraire tout le ZIP puis lancer `Companion.Desktop.exe`. Ce paquet de test n’est pas signé et n’intègre pas encore l’auto-update. Aucun artefact de cette nouvelle configuration n’a encore été vérifié.
+Use `--drop`, `--interrupt` or `--stall` to exercise failure states. All emitted players
+and numbers are fictional. See [testing and acceptance checks](docs/en/testing.md).
 
-## Validation et limites
+GitHub Actions builds on Linux and Windows. After a successful Windows job, download
+`gw2-companion-windows-x64-preview-…`, extract the entire ZIP and launch
+`Companion.Desktop.exe`. The runtime is bundled. Preview artifacts are unsigned and
+expire after 14 days. Signing has a separate, disabled-by-default manual workflow.
+Windows builds and visual checks have not been verified in the Linux development
+workspace; GitHub Actions results must be checked before distributing a build.
 
-**17/17 scénarios passent sous Linux** : profils, stockage, navigation, protocole, échanges sur un vrai pipe, pertes, déconnexion et timeout. Le simulateur compile sans avertissement. XML XAML bien formé. **Compilation WPF non vérifiée** : restauration des références Windows bloquée ici par le proxy sur `api.nuget.org` (NU1301/HTTP 403). Les résultats de la CI distante n’ont pas pu être consultés ; la disponibilité des paquets dépend de son succès. Aucun lancement ni essai visuel Windows ; voir [design-qa.md](design-qa.md).
+## Data and project status
 
-Encore à implémenter : bridge et données réelles, inventaire/installation ArcDPS, logs/sessions, WvW Insights, profils extensibles aux réglages d’intégrations tierces, restauration de position multi-écran et grille magnétique. Les onglets concernés expliquent leur indisponibilité. Aucun fichier du jeu modifié, aucun log envoyé.
+Profiles: `%LOCALAPPDATA%/GW2Companion/profiles.json`, with a previous `.bak` copy.
+Language: `language.txt` in the same directory, excluded from profile exports.
+Invalid profile files are not silently replaced. [Privacy](PRIVACY.md).
 
-## Conception et sources
+[Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Third-party notices](THIRD_PARTY_NOTICES.md)
 
-1. [Produit, écrans et parcours](docs/01-produit-et-parcours.md)
-2. [Architecture](docs/02-architecture.md)
-3. [Profils, intégrations et widgets](docs/03-modele.md)
-4. [Bridge et reprise](docs/04-bridge.md)
-5. [Installation et coexistence](docs/05-installation.md)
-6. [Logs et WvW Insights](docs/06-publication.md)
-7. [Matrice et sources](docs/07-sources-et-integrations.md)
-8. [Réalisation et validation](docs/08-realisation.md)
-9. [Livraison Windows et auto-update](docs/09-livraison-et-auto-update.md)
-10. [Transport local et simulateur implémentés](docs/10-transport-local.md)
-11. [Premier essai Windows : récupération et vérifications](docs/11-premier-test-windows.md)
-
-Cible : .NET 10/WPF, SQLite, bridge C++ x64 et Named Pipes. Ni Blish HUD ni Nexus requis pour la fonction principale. Les API officielles ArcDPS/WvW Insights et les règles ArenaNet restent à relire depuis les domaines bloqués ici. Aucune intégration validée en jeu.
+The [roadmap](docs/en/roadmap.md) distinguishes implemented work from proposals.
+Detailed original design notes remain in French under `docs/01-…` through `docs/11-…`;
+the English guides cover setup, architecture, testing and release preparation.
+No integration has been validated inside GW2. This independent project is not affiliated
+with ArenaNet, ArcDPS or SignPath Foundation.

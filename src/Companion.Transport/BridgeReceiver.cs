@@ -1,3 +1,4 @@
+using static Companion.Core.Localization.Text;
 using System.IO.Pipes;
 using System.Security.Cryptography;
 using System.Text;
@@ -27,7 +28,7 @@ public sealed class BridgeReceiver
         this.pipeName = pipeName ?? DefaultPipeName;
         this.timeout = timeout ?? TimeSpan.FromSeconds(3);
         if (this.pipeName.Length is < 1 or > 80 || this.pipeName.Any(c => !char.IsAsciiLetterOrDigit(c) && c != '-'))
-            throw new ArgumentException("Nom de pipe invalide.", nameof(pipeName));
+            throw new ArgumentException(T("InvalidPipe"), nameof(pipeName));
         if (this.timeout < TimeSpan.FromMilliseconds(50) || this.timeout > TimeSpan.FromMinutes(1))
             throw new ArgumentOutOfRangeException(nameof(timeout));
     }
@@ -44,7 +45,7 @@ public sealed class BridgeReceiver
 
     public async Task RunAsync(CancellationToken stop)
     {
-        if (Interlocked.Exchange(ref running, 1) != 0) throw new InvalidOperationException("Le récepteur est déjà en cours.");
+        if (Interlocked.Exchange(ref running, 1) != 0) throw new InvalidOperationException(T("ReceiverRunning"));
         try
         {
             while (!stop.IsCancellationRequested)
@@ -70,14 +71,14 @@ public sealed class BridgeReceiver
                     }
                 }
                 catch (OperationCanceledException) when (!stop.IsCancellationRequested)
-                { SetState(BridgeConnection.Stale, "Aucun message complet reçu dans le délai prévu."); }
+                { SetState(BridgeConnection.Stale, T("FrameTimeout")); }
                 catch (InvalidDataException e) { SetState(BridgeConnection.Rejected, e.Message); }
-                catch (IOException) { SetState(BridgeConnection.Disconnected, "La connexion locale a été interrompue."); }
+                catch (IOException) { SetState(BridgeConnection.Disconnected, T("PipeInterrupted")); }
             }
         }
         catch (OperationCanceledException) when (stop.IsCancellationRequested) { }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException)
-        { SetState(BridgeConnection.Faulted, "Le canal local ne peut pas être ouvert."); return; }
+        { SetState(BridgeConnection.Faulted, T("PipeOpenFailed")); return; }
         finally { Interlocked.Exchange(ref running, 0); }
         SetState(BridgeConnection.Stopped);
     }

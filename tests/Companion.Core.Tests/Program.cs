@@ -1,8 +1,38 @@
 using Companion.Core;
 using Companion.Desktop;
+using Companion.Core.Localization;
+
+Text.SetLanguage("fr"); // Existing fixture names and assertions deliberately use French.
 
 var tests = new (string Name, Action Run)[]
 {
+    ("English/French resources, persisted language and user names", () => WithDirectory(dir =>
+    {
+        try
+        {
+            var path = Path.Combine(dir, "language.txt");
+            Check(LanguagePreferences.Load(path) == "en");
+            Text.SetLanguage("en");
+            Check(Text.T("Dashboard") == "Dashboard");
+            Check(Text.T("PageNumber", 2) == "Page 2");
+            var profile = Profile.Create("Mon nom personnel", true);
+            var store = new ProfileStore(Path.Combine(dir, "profiles.json"));
+            var vm = new DashboardViewModel(store, Workspace.CreateDefault(), Path.Combine(dir, "profiles.json"));
+            vm.SelectedLanguage = "fr";
+            Check(LanguagePreferences.Load(path) == "fr" && Text.Language == "en");
+            Text.SetLanguage(LanguagePreferences.Load(path));
+            Check(Text.T("Dashboard") == "Dashboard");
+            Check(Text.T("Settings") == "Paramètres");
+            Check(profile.Name == "Mon nom personnel");
+            Check(1234.5.ToString("N1").EndsWith(",5"));
+            Text.SetLanguage("en");
+            Check(Text.T("Settings") == "Settings");
+            Check(1234.5.ToString("N1") == "1,234.5");
+            File.WriteAllText(path, "unsupported");
+            Check(LanguagePreferences.Load(path) == "en");
+        }
+        finally { Text.SetLanguage("fr"); }
+    })),
     ("Duplication indépendante des profils, pages et filtres", () =>
     {
         var original = Profile.Create("Source", true);

@@ -1,0 +1,77 @@
+name: Sign Windows preview (opt-in)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: windows-signing
+  cancel-in-progress: false
+jobs:
+  sign:
+    if: github.ref == 'refs/heads/main' && vars.SIGNPATH_ENABLED == 'true'
+    runs-on: windows-latest
+    environment: code-signing
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Validate signing configuration
+        shell: pwsh
+        env:
+          SIGNING_TOKEN: ${{ secrets.SIGNPATH_API_TOKEN }}
+          ORGANIZATION: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          PROJECT: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          POLICY: ${{ vars.SIGNPATH_POLICY_SLUG }}
+          ARTIFACT: ${{ vars.SIGNPATH_ARTIFACT_CONFIGURATION_SLUG }}
+          THUMBPRINT: ${{ vars.SIGNPATH_CERTIFICATE_THUMBPRINT }}
+        run: |
+          foreach ($key in 'SIGNING_TOKEN','ORGANIZATION','PROJECT','POLICY','ARTIFACT','THUMBPRINT') {
+            if (-not [Environment]::GetEnvironmentVariable($key)) { throw "Missing configuration: $key" }
+          }
+      - run: python scripts/check-localization.py
+      - run: dotnet run --project tests/Companion.Core.Tests --configuration Release
+      - run: ./scripts/package-windows.ps1
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        id: unsigned
+        with:
+          name: signing-input-${{ github.sha }}
+          path: artifacts/windows-preview/
+          if-no-files-found: error
+          retention-days: 7
+      - name: Request signature and retrieve result
+        uses: signpath/github-action-submit-signing-request@f6d04783b4569d051e0c80105fe66e82819d0092 # v3.0
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG }}
+          artifact-configuration-slug: ${{ vars.SIGNPATH_ARTIFACT_CONFIGURATION_SLUG }}
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: artifacts/signed
+      - name: Verify project signatures before exposing signed artifact
+        shell: pwsh
+        env:
+          EXPECTED_THUMBPRINT: ${{ vars.SIGNPATH_CERTIFICATE_THUMBPRINT }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expected = $env:EXPECTED_THUMBPRINT.Replace(' ', '').ToUpperInvariant()
+          if ($expected -notmatch '^[A-F0-9]{40}$') { throw 'Expected SHA-1 certificate thumbprint must have 40 hexadecimal characters.' }
+          $required = @('Companion.Desktop.exe', 'Companion.Desktop.dll', 'Companion.Core.dll', 'Companion.Transport.dll', 'fr/Companion.Core.resources.dll')
+          foreach ($relative in $required) {
+            $path = Join-Path 'artifacts/signed' $relative
+            if (-not (Test-Path $path -PathType Leaf)) { throw "Missing signed output: $relative" }
+            $signature = Get-AuthenticodeSignature $path
+            if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Thumbprint -ne $expected) {
+              throw "Unexpected or invalid publisher signature: $relative"
+            }
+          }
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: gw2-companion-windows-x64-signed-${{ github.sha }}
+          path: artifacts/signed/
+          if-no-files-found: error
+          retention-days: 14

@@ -1,6 +1,8 @@
+using static Companion.Core.Localization.Text;
 using System.IO;
 using System.Windows;
 using Companion.Core;
+using Companion.Core.Localization;
 
 namespace Companion.Desktop;
 
@@ -10,10 +12,12 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GW2Companion");
+        SetLanguage(LanguagePreferences.Load(Path.Combine(directory, "language.txt")));
         instance = new Mutex(true, "Local\\GW2CompanionDesktop", out var first);
         if (!first)
         {
-            MessageBox.Show("Le compagnon est déjà ouvert dans cette session Windows.");
+            MessageBox.Show(T("AlreadyOpen"));
             Shutdown(); return;
         }
         var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GW2Companion", "profiles.json");
@@ -25,7 +29,7 @@ public partial class App : Application
         }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or System.Text.Json.JsonException)
         {
-            MessageBox.Show($"Les profils ne peuvent pas être ouverts. Le fichier existant est conservé.\n\n{path}\n\n{error.Message}\n\nUne sauvegarde précédente peut être disponible dans profiles.json.bak.", "Profils indisponibles", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(T("ProfileLoadFailed", path, error.Message), T("ProfilesUnavailable"), MessageBoxButton.OK, MessageBoxImage.Error);
             Shutdown(1);
         }
     }
