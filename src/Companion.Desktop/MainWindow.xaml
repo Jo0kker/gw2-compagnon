@@ -21,6 +21,12 @@
        <TextBox x:Name="ProfileNameInput" Text="{Binding ProfileName, Mode=OneWay}" Width="190" MaxLength="80" AutomationProperties.Name="Nom du profil"/>
        <Button Content="Renommer" Click="RenameProfile"/><Button Content="Nouveau profil" Click="NewProfile"/>
        <Button Content="Dupliquer le profil" Click="DuplicateProfile"/><Button Content="Supprimer le profil" Click="DeleteProfile"/>
+       <Button Content="Importer" Click="ImportProfile"/><Button Content="Exporter" Click="ExportProfile"/>
+      </WrapPanel>
+      <WrapPanel Margin="0,0,0,10">
+       <TextBox x:Name="PageNameInput" Text="{Binding PageName, Mode=OneWay}" Width="190" MaxLength="80" AutomationProperties.Name="Nom de la page"/>
+       <Button Content="Renommer la page" Click="RenamePage"/><Button Content="Dupliquer la page" Click="DuplicatePage"/>
+       <Button Content="Supprimer la page" Click="DeletePage"/>
        <Button Content="Ajouter une page" Click="AddPage"/>
       </WrapPanel>
       <WrapPanel>
@@ -85,6 +91,9 @@
      <TextBlock Text="Sources de données" FontSize="28" FontWeight="SemiBold"/>
      <CheckBox Content="Activer le rejeu fictif" IsChecked="{Binding ReplayEnabled}" Foreground="#EAF0F6" Margin="0,24,0,12" FontSize="18"/>
      <TextBlock Text="Fournit les tableaux de dégâts joueurs et sous-groupes. Désactiver cette source conserve les widgets et leurs filtres." TextWrapping="Wrap" Foreground="{StaticResource Muted}"/>
+     <CheckBox Content="Utiliser le simulateur local à la place du rejeu intégré" IsChecked="{Binding UseLocalBridge}" Foreground="#EAF0F6" Margin="0,24,0,12" FontSize="18"/>
+     <TextBlock Text="{Binding BridgeSummary}" TextWrapping="Wrap" Foreground="{StaticResource Muted}"/>
+     <TextBlock Text="Lancez Companion.BridgeSimulator sous le même utilisateur. Les événements passent réellement par le canal local, mais restent fictifs. Une coupure conserve les dernières valeurs et indique que le combat est incomplet." TextWrapping="Wrap" Foreground="{StaticResource Muted}" Margin="0,8,0,0"/>
      <TextBlock Text="ArcDPS et bridge — non implémentés" FontSize="20" Margin="0,32,0,10"/>
      <TextBlock Text="Ce prototype ne détecte ni ne modifie les fichiers du jeu. Aucune compatibilité réelle n’est encore validée." TextWrapping="Wrap" Foreground="{StaticResource Muted}"/>
     </StackPanel>

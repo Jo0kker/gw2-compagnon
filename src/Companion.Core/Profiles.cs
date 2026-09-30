@@ -7,7 +7,7 @@ public sealed record Widget(Guid Id, string Kind, WidgetSettings Settings, Widge
     public Widget Duplicate() => this with
     {
         Id = Guid.NewGuid(), Settings = Settings with { },
-        Layout = Layout with { X = Layout.X + 16, Y = Layout.Y + 16 }
+        Layout = Layout with { X = Math.Min(Layout.X + 16, 10000), Y = Math.Min(Layout.Y + 16, 10000) }
     };
 }
 public sealed record ProfilePage(Guid Id, string Name, List<Widget> Widgets);

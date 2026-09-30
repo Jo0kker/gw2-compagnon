@@ -6,7 +6,7 @@ Référence : maquette 01 choisie, simplifiée sans menu latéral dans `docs/maq
 
 Le XAML définit une navigation supérieure, deux tableaux, un sélecteur profil/page, un indicateur de source fictive et un mode édition. Les profils et filtres sont reliés au domaine et au stockage local.
 
-Vérifications exécutées : sept scénarios du cœur et du modèle de présentation compilés/exécutés sous .NET 10 Linux, réussis ; parsing XML des deux fichiers XAML, réussi. Le parsing XML ne remplace pas une compilation XAML.
+Vérifications exécutées : dix-sept scénarios du cœur, du modèle de présentation et du transport local compilés/exécutés sous .NET 10 Linux, réussis ; parsing XML des deux fichiers XAML, réussi. Le parsing XML ne remplace pas une compilation XAML. Le simulateur compile également ; le raccordement du récepteur au cycle de vie WPF reste à vérifier sous Windows.
 
 Compilation Desktop tentée : bloquée lors de la restauration des références WindowsDesktop via NuGet (proxy HTTP 403 / NU1301). Aucune capture de rendu WPF : environnement Linux, sans session Windows.
 

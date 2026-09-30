@@ -2,7 +2,7 @@
 
 ## État de cette livraison
 
-Réalisé : recherche documentaire, conception, trois maquettes puis variante 01 simplifiée. Premier code : cœur C#, stockage JSON validé avec sauvegarde, rejeu synthétique, modèle de présentation, shell WPF et CI. Sept scénarios exécutés sous Linux passent. Compilation WPF bloquée par le refus réseau NuGet ; aucun lancement Windows ni essai en jeu. SQLite, bridge, installations et publication réelle restent à réaliser.
+Réalisé : recherche documentaire, conception, maquette 01 simplifiée, cœur C#, stockage JSON validé avec sauvegarde, rejeu synthétique, modèle de présentation, shell WPF et CI. Transport local et simulateur ajoutés : dix-sept scénarios passent sous Linux, dont de vrais échanges Named Pipe. Compilation WPF bloquée par le refus réseau NuGet ; aucun lancement Windows ni essai en jeu. SQLite, DLL bridge native, installations et publication réelle restent à réaliser. Le processus d’auto-update est spécifié mais pas encore implémenté.
 
 Le choix visuel est acquis : 01 simplifiée sans sidebar. Le README décrit le périmètre exact du premier incrément ; les lots ci-dessous décrivent toujours la cible complète. Le nom du produit et le certificat de signature ne bloquent pas le domaine ni le rejeu.
 

@@ -12,6 +12,8 @@ var tests = new (string Name, Action Run)[]
         copy.Pages[0].Widgets[0] = w with { Settings = w.Settings with { Subgroup = 2 } };
         Check(original.Pages[0].Widgets[0].Settings.Subgroup is null);
         Check(original.Pages[0].Widgets[0].Id != w.Id);
+        var edge = w with { Layout = w.Layout with { X = 10000, Y = 10000 } };
+        Check(edge.Duplicate().Layout.X == 10000 && edge.Duplicate().Layout.Y == 10000);
     }),
     ("DPS exact, filtres indépendants, durée inconnue sans faux zéro", () =>
     {
@@ -77,6 +79,63 @@ var tests = new (string Name, Action Run)[]
         vm.DeleteProfile(); Check(vm.Profiles.Count == 1);
         vm.DeleteProfile(); Check(vm.Profiles.Count == 1 && vm.Widgets.Count == 0);
     })),
+    ("Profil portable : aller-retour sans identité machine ni référence partagée", () =>
+    {
+        var original = Profile.Create("Portable", true);
+        var widget = original.Pages[0].Widgets[0];
+        original.Pages[0].Widgets[0] = widget with { Hidden = true, Settings = new(2, 15) };
+        var bytes = ProfileTransfer.Export(original);
+        using var document = System.Text.Json.JsonDocument.Parse(bytes);
+        Check(document.RootElement.EnumerateObject().Select(p => p.Name).Order().SequenceEqual(new[] { "Name", "Pages", "Version" }));
+        var imported = ProfileTransfer.Import(bytes);
+        Check(imported.Profile.Id != original.Id && imported.Profile.Pages[0].Id != original.Pages[0].Id);
+        var copy = imported.Profile.Pages[0].Widgets[0];
+        Check(copy.Id != widget.Id && copy.Hidden && copy.Settings == new WidgetSettings(2, 15));
+        Check(copy.Layout == widget.Layout && imported.MissingWidgetKinds.Count == 0);
+        imported.Profile.Pages[0].Widgets.Clear();
+        Check(original.Pages[0].Widgets.Count == 2);
+    }),
+    ("Import : widgets inconnus conservés, formats dangereux ou futurs refusés", () =>
+    {
+        var profile = Profile.Create("Manquant", true);
+        var widget = profile.Pages[0].Widgets[0];
+        profile.Pages[0].Widgets[0] = widget with { Kind = "third-party.unknown", Settings = new(9, 50) };
+        var bytes = ProfileTransfer.Export(profile);
+        var imported = ProfileTransfer.Import(bytes);
+        Check(imported.MissingWidgetKinds.Single() == "third-party.unknown");
+        Check(imported.Profile.Pages[0].Widgets[0].Layout == widget.Layout);
+        Check(imported.Profile.Pages[0].Widgets[0].Settings == new WidgetSettings());
+        var text = System.Text.Encoding.UTF8.GetString(bytes);
+        Throws(() => ProfileTransfer.Import(System.Text.Encoding.UTF8.GetBytes(text.Replace("\"Version\": 1", "\"Version\": 99"))));
+        Throws(() => ProfileTransfer.Import(System.Text.Encoding.UTF8.GetBytes(text.Replace("\"Version\": 1", "\"token\": \"secret-sentinel\", \"Version\": 1"))));
+        Throws(() => ProfileTransfer.Import(new byte[ProfileTransfer.MaxBytes + 1]));
+        Throws(() => ProfileTransfer.Import("{}"u8));
+    }),
+    ("Pages : renommer, dupliquer et supprimer sans altérer les autres pages", () => WithDirectory(dir =>
+    {
+        var path = Path.Combine(dir, "profiles.json"); var store = new ProfileStore(path);
+        var vm = new DashboardViewModel(store, Workspace.CreateDefault(), path);
+        vm.Widgets[0].Group = 2; vm.RenamePage("Escouade"); var first = vm.Page;
+        vm.DuplicatePage(); Check(vm.Page.Id != first.Id && vm.PageName == "Escouade — copie");
+        vm.Widgets[0].Group = 3; vm.Save();
+        Check(first.Widgets[0].Settings.Subgroup == 2);
+        vm.DeletePage(); Check(vm.Pages.Count == 1 && vm.Page.Id == first.Id);
+        vm.DeletePage(); Check(vm.Pages.Count == 1 && vm.Widgets.Count == 0);
+        Check(store.Load().Profiles[0].Pages.Count == 1);
+    })),
+    ("Import répété indépendant et lecture de fichier bornée", () => WithDirectory(dir =>
+    {
+        var path = Path.Combine(dir, "profiles.json"); var store = new ProfileStore(path);
+        var vm = new DashboardViewModel(store, Workspace.CreateDefault(), path);
+        var portable = Path.Combine(dir, "portable.json"); File.WriteAllBytes(portable, vm.ExportProfile());
+        var imported = ProfileTransfer.ReadFile(portable);
+        vm.ImportProfile(imported); var first = vm.Selected;
+        vm.ImportProfile(imported); Check(vm.Selected.Id != first.Id && vm.Profiles.Count == 3);
+        store.Load().Validate();
+        File.WriteAllBytes(portable, new byte[ProfileTransfer.MaxBytes + 1]);
+        Throws(() => ProfileTransfer.ReadFile(portable));
+        Check(vm.Profiles.Count == 3);
+    })),
     ("Fichier invalide ou futur jamais remplacé silencieusement", () => WithDirectory(dir =>
     {
         var path = Path.Combine(dir, "profiles.json"); File.WriteAllText(path, "{invalid");
@@ -91,7 +150,10 @@ foreach (var (name, run) in tests)
     try { run(); Console.WriteLine($"PASS {name}"); }
     catch (Exception error) { failures++; Console.Error.WriteLine($"FAIL {name}: {error.Message}"); }
 }
-Console.WriteLine($"{tests.Length - failures}/{tests.Length} scénarios réussis.");
+var bridgeTests = await BridgeTests.RunAsync();
+failures += bridgeTests.Failed;
+var count = tests.Length + bridgeTests.Total;
+Console.WriteLine($"{count - failures}/{count} scénarios réussis.");
 return failures == 0 ? 0 : 1;
 
 static void Check(bool condition) { if (!condition) throw new Exception("Assertion échouée"); }

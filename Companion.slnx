@@ -2,8 +2,12 @@
   <Folder Name="/src/">
     <Project Path="src/Companion.Core/Companion.Core.csproj" />
     <Project Path="src/Companion.Desktop/Companion.Desktop.csproj" />
+    <Project Path="src/Companion.Transport/Companion.Transport.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Companion.Core.Tests/Companion.Core.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Companion.BridgeSimulator/Companion.BridgeSimulator.csproj" />
   </Folder>
 </Solution>

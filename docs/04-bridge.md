@@ -1,5 +1,7 @@
 # Contrat du bridge — proposition v0
 
+Un premier transport de **simulation** est désormais implémenté en .NET, avec récepteur et programme émetteur séparé. Voir [le protocole expérimental et ses tests](10-transport-local.md). La proposition native ci-dessous reste distincte : aucune DLL ni ABI ArcDPS n’est implémentée pour l’instant.
+
 Ce document décrit **notre protocole**, pas l’ABI officielle ArcDPS. L’ABI exacte, ses structures, conventions d’appel, callbacks concurrents et règles de chargement devront être relues et figées avant de compiler une DLL. Aucun pointeur brut du jeu ne traverse le transport.
 
 ## Responsabilités et cycle de vie

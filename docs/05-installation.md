@@ -44,3 +44,5 @@ Un helper élevé éventuel exécute un plan validé et borné, pas une commande
 ## Livraison et maintenance
 
 Installateur de l’application distinct des addons. Proposition : installation par utilisateur, runtime .NET inclus, binaires x64 signés Authenticode lorsque certificat et processus de release sont disponibles. Mise à jour de l’application avec migration sauvegardée ; distribution du bridge depuis nos releases contrôlées. Catalogue extensible par manifestes déclaratifs, mais une nouvelle recette native demande revue et test avant activation.
+
+Le parcours d’auto-update, les canaux preview/stable, les exigences de signature et la livraison d’une première version testable sont détaillés dans [Livraison Windows et auto-update](09-livraison-et-auto-update.md). Le moteur d’auto-update reste à implémenter.

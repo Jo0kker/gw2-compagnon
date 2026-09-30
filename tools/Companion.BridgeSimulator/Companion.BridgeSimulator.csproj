@@ -1,6 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><TargetFramework>net10.0</TargetFramework><OutputType>Exe</OutputType></PropertyGroup>
-  <ItemGroup><ProjectReference Include="../../src/Companion.Core/Companion.Core.csproj" /></ItemGroup>
   <ItemGroup><ProjectReference Include="../../src/Companion.Transport/Companion.Transport.csproj" /></ItemGroup>
-  <ItemGroup><Compile Include="../../src/Companion.Desktop/DashboardViewModel.cs" Link="DashboardViewModel.cs" /></ItemGroup>
 </Project>
